@@ -20,12 +20,16 @@ export default function Home({ navigation }){
                     <Text>ENTRADA</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.Btn}>
+                <TouchableOpacity style={styles.Btn}
+                    onPress={() => navigation.navigate('Saida')}
+                >
                     <MaterialCommunityIcons name="truck-delivery" size={50} color="black" />
                     <Text>SAÍDA</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.Btn}>
+                <TouchableOpacity style={styles.Btn}
+                    onPress={() => navigation.navigate('Estoque')}
+                >
                 <Feather name="package" size={50} color="black" />
                     <Text>ESTOQUE</Text>
                 </TouchableOpacity>
