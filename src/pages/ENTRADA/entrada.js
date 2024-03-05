@@ -12,7 +12,7 @@ import {
 import { Entypo, MaterialCommunityIcons, Feather  } from '@expo/vector-icons';
 
 // importando firestore
-import { collection, addDoc, getDocs, onSnapshot } from 'firebase/firestore';
+import { collection, addDoc, getDocs, onSnapshot, doc, setDoc} from 'firebase/firestore';
 import { db } from '../../FIREBASE/firebase'; // Importe o db do seu arquivo de configuração
 
 export default function Entrada(){
@@ -21,7 +21,6 @@ export default function Entrada(){
     const [produto, setProduto] = useState('');
     const [quantidade, setQuantidade] = useState('');
     const [fornecedor, setFornecedor] = useState('');
-
 
     const handleCadastro = async () => {
 

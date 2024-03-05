@@ -4,14 +4,15 @@ import {
     Text,
     TouchableOpacity,
     StyleSheet,
-    TextInput
+    TextInput,
+    Alert
 } from 'react-native'
 
 // icons
 import { Entypo, MaterialCommunityIcons, Feather  } from '@expo/vector-icons';
 
 // importando firestore
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, query, where, getDocs} from 'firebase/firestore';
 import { db } from '../../FIREBASE/firebase'; // Importe o db do seu arquivo de configuração
 
 export default function Saida(){
@@ -23,27 +24,46 @@ export default function Saida(){
 
     const handleSaida = async () => {
         try {
-            // Adicionar os dados ao Firestore
-            const docRef = await addDoc(collection(db, 'saida'), {
-                operacao: "saida",
-                nf: nf,
-                produto: produto,
-                quantidade: quantidade,
-                destino: destino
-            });
-            console.log('Documento adicionado com ID: ', docRef.id);
-            alert("Saida Registrada!")
-
-            // Limpar os campos após a adição dos dados
-            setNF('');
-            setProduto('');
-            setQuantidade('');
-            setDestino('');
+          // Calcula o saldo atual
+          const estoqueDocSnapshot = await getDocs(query(collection(db, "estoque"), where("produto", "==", produto)));
+          let saldoAtual = 0;
+    
+          estoqueDocSnapshot.forEach((doc) => {
+            const item = doc.data();
+            if (item.operacao === "entrada") {
+              saldoAtual += parseInt(item.quantidade);
+            } else if (item.operacao === "saida") {
+              saldoAtual -= parseInt(item.quantidade);
+            }
+          });
+    
+          // Verifica se a quantidade de saída excede o saldo disponível
+          if (saldoAtual < parseInt(quantidade)) {
+            Alert.alert("Erro", "Quantidade de saída excede o saldo disponível.");
+            return;
+          }
+    
+          // Adicionar os dados ao Firestore
+          const docRef = await addDoc(collection(db, 'estoque'), {
+            operacao: "saida",
+            nf: nf,
+            produto: produto,
+            quantidade: quantidade,
+            destino: destino,
+          });
+          console.log('Documento adicionado com ID: ', docRef.id);
+          Alert.alert("Sucesso", "Saída registrada com sucesso!");
+    
+          // Limpar os campos após a adição dos dados
+          setNF('');
+          setProduto('');
+          setQuantidade('');
+          setDestino('');
         } catch (error) {
-            console.error('Erro ao adicionar dados: ', error);
-            alert("Ocorreu um erro!")
+          console.error('Erro ao adicionar dados: ', error);
+          Alert.alert("Erro", "Ocorreu um erro ao registrar a saída.");
         }
-    }
+      };
 
 
     return (

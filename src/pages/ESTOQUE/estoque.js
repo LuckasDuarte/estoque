@@ -16,96 +16,74 @@ import { db } from '../../FIREBASE/firebase'; // Importe o db do seu arquivo de 
 
 export default function Estoque({ navigation }){
 
-    const [estoque, setEstoque] = useState([]);
+    const [estoqueAtual, setEstoqueAtual] = useState({});
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Consultar entradas
-                const entradasSnapshot = await getDocs(collection(db, 'estoque'));
-                const entradas = entradasSnapshot.docs.map(doc => doc.data());
+        const unsubscribe = onSnapshot(collection(db, "estoque"), (snapshot) => {
+        const estoqueData = {};
 
-                // Consultar saídas
-                const saidasSnapshot = await getDocs(collection(db, 'saida'));
-                const saidas = saidasSnapshot.docs.map(doc => doc.data());
+        snapshot.forEach((doc) => {
+            const item = doc.data();
+            const { produto, operacao, quantidade } = item;
 
-                // Calcular saldo para cada produto
-                const saldoPorProduto = {};
-
-                // Calcular entradas
-                entradas.forEach(entrada => {
-                    if (!saldoPorProduto[entrada.produto]) {
-                        saldoPorProduto[entrada.produto] = entrada.quantidade;
-                    } else {
-                        saldoPorProduto[entrada.produto] += entrada.quantidade;
-                    }
-                });
-
-                // Subtrair saídas
-                saidas.forEach(saida => {
-                    if (!saldoPorProduto[saida.produto]) {
-                        saldoPorProduto[saida.produto] = -saida.quantidade;
-                    } else {
-                        saldoPorProduto[saida.produto] -= saida.quantidade;
-                    }
-                });
-
-                // Transformar o objeto saldoPorProduto em um array
-                const estoqueArray = Object.entries(saldoPorProduto).map(([produto, saldo]) => ({ produto, saldo }));
-                setEstoque(estoqueArray);
-            } catch (error) {
-                console.error('Erro ao buscar dados do estoque:', error);
+            if (!estoqueData[produto]) {
+            estoqueData[produto] = 0;
             }
-        };
 
-        fetchData();
-
-        // Atualizar o estoque em tempo real
-        const unsubscribe = onSnapshot(collection(db, 'estoque'), () => {
-            fetchData();
+            if (operacao === "entrada") {
+            estoqueData[produto] += parseInt(quantidade);
+            } else if (operacao === "saida") {
+            estoqueData[produto] -= parseInt(quantidade);
+            }
         });
 
-        return () => unsubscribe();
+        setEstoqueAtual(estoqueData);
+        });
+
+        return () => {
+        unsubscribe();
+        };
     }, []);
-
-
+    
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Estoque</Text>
-            <FlatList
-                data={estoque}
-                keyExtractor={(item) => item.produto}
-                renderItem={({ item }) => (
-                    <View style={styles.item}>
-                        <TouchableOpacity>
-                            <Text>{item.produto}</Text>
-                            <Text>Quantidade: {item.saldo}</Text>
-                        </TouchableOpacity>
-                        
-                    </View>
-                )}
-            />
-        </View> 
+            <Text style={styles.title}>Estoque Atual</Text>
+                {Object.keys(estoqueAtual).map((produto, index) => (
+                <View key={index} style={styles.produtoContainer}>
+                    <Text style={styles.produtoNome}>{produto}</Text>
+                    <Text style={styles.produtoQuantidade}>
+                    Quantidade: {estoqueAtual[produto]}
+                    </Text>
+                </View>
+                 ))}
+      </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff'
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginTop: 20,
-        marginBottom: 10
-    },
-    item: {
+        alignItems: "center",
+        backgroundColor: "#fff",
         padding: 20,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc'
-    }
+      },
+      title: {
+        fontSize: 20,
+        marginBottom: 20,
+      },
+      produtoContainer: {
+        display: 'flex',
+        alignItems :'center',
+        marginBottom: 10,
+        marginTop: 20,
+      },
+      produtoNome: {
+        fontSize: 20,
+        fontWeight: "bold",
+      },
+      produtoQuantidade: {
+        fontSize: 16,
+      },
 })
 
 
