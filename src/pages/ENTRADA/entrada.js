@@ -5,7 +5,6 @@ import {
     TouchableOpacity,
     StyleSheet,
     TextInput,
-    Keyboard
 } from 'react-native'
 
 // icons
