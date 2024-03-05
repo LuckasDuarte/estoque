@@ -14,7 +14,7 @@ import { Entypo, MaterialCommunityIcons, Feather  } from '@expo/vector-icons';
 import { collection, getDocs, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../../FIREBASE/firebase'; // Importe o db do seu arquivo de configuração
 
-export default function Estoque(){
+export default function Estoque({ navigation }){
 
     const [estoque, setEstoque] = useState([]);
 
@@ -69,18 +69,19 @@ export default function Estoque(){
     }, []);
 
 
-
-
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Estoque</Text>
             <FlatList
                 data={estoque}
-                keyExtractor={(item, index) => item.produto}
+                keyExtractor={(item) => item.produto}
                 renderItem={({ item }) => (
                     <View style={styles.item}>
-                        <Text>{item.produto}</Text>
-                        <Text>Quantidade: {item.saldo}</Text>
+                        <TouchableOpacity>
+                            <Text>{item.produto}</Text>
+                            <Text>Quantidade: {item.saldo}</Text>
+                        </TouchableOpacity>
+                        
                     </View>
                 )}
             />

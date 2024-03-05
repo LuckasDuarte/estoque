@@ -4,7 +4,8 @@ import {
     Text,
     TouchableOpacity,
     StyleSheet,
-    TextInput
+    TextInput,
+    Keyboard
 } from 'react-native'
 
 // icons
@@ -20,10 +21,11 @@ export default function Entrada(){
     const [produto, setProduto] = useState('');
     const [quantidade, setQuantidade] = useState('');
     const [fornecedor, setFornecedor] = useState('');
-    const [estoque, setEstoque] = useState([]);
 
 
     const handleCadastro = async () => {
+
+        
         try {
             // Adicionar os dados ao Firestore
             const docRef = await addDoc(collection(db, 'estoque'), {
