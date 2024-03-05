@@ -24,13 +24,15 @@ export default function Entrada(){
     const handleCadastro = async () => {
         try {
             // Adicionar os dados ao Firestore
-            const docRef = await addDoc(collection(db, 'entrada'), {
+            const docRef = await addDoc(collection(db, 'estoque'), {
+                operacao: "entrada",
                 nf: nf,
                 produto: produto,
                 quantidade: quantidade,
                 fornecedor: fornecedor
             });
             console.log('Documento adicionado com ID: ', docRef.id);
+            alert("Entrada Registrada!")
 
             // Limpar os campos após a adição dos dados
             setNF('');

@@ -10,6 +10,10 @@ import {
 // icons
 import { Entypo, MaterialCommunityIcons, Feather  } from '@expo/vector-icons';
 
+// importando firestore
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../../FIREBASE/firebase'; // Importe o db do seu arquivo de configuração
+
 export default function Saida(){
 
     const [nf, setNF] = useState('');
@@ -17,18 +21,28 @@ export default function Saida(){
     const [quantidade, setQuantidade] = useState('');
     const [destino, setDestino] = useState('');
 
-    const handleSubmit = () => {
-        // Aqui você pode adicionar a lógica para enviar os dados para o banco de dados ou para outro lugar
-        console.log('NF:', nf);
-        console.log('Produto:', produto);
-        console.log('Quantidade:', quantidade);
-        console.log('Destino:', destino);
+    const handleSaida = async () => {
+        try {
+            // Adicionar os dados ao Firestore
+            const docRef = await addDoc(collection(db, 'saida'), {
+                operacao: "saida",
+                nf: nf,
+                produto: produto,
+                quantidade: quantidade,
+                destino: destino
+            });
+            console.log('Documento adicionado com ID: ', docRef.id);
+            alert("Saida Registrada!")
 
-        // Limpar os campos após o envio
-        setNF('');
-        setProduto('');
-        setQuantidade('');
-        setDestino('');
+            // Limpar os campos após a adição dos dados
+            setNF('');
+            setProduto('');
+            setQuantidade('');
+            setDestino('');
+        } catch (error) {
+            console.error('Erro ao adicionar dados: ', error);
+            alert("Ocorreu um erro!")
+        }
     }
 
 
@@ -61,7 +75,7 @@ export default function Saida(){
                 value={destino}
                 onChangeText={text => setDestino(text)}
             />
-            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+            <TouchableOpacity style={styles.button} onPress={handleSaida}>
                 <Text style={styles.buttonText}>Registrar Saída</Text>
             </TouchableOpacity>
         </View> 
