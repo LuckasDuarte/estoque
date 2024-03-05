@@ -10,6 +10,10 @@ import {
 // icons
 import { Entypo, MaterialCommunityIcons, Feather  } from '@expo/vector-icons';
 
+// importando firestore
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../../FIREBASE/firebase'; // Importe o db do seu arquivo de configuração
+
 export default function Entrada(){
 
     const [nf, setNF] = useState('');
@@ -17,18 +21,25 @@ export default function Entrada(){
     const [quantidade, setQuantidade] = useState('');
     const [fornecedor, setFornecedor] = useState('');
 
-    const handleSubmit = () => {
-        // Aqui você pode adicionar a lógica para enviar os dados para o banco de dados ou para outro lugar
-        console.log('NF:', nf);
-        console.log('Produto:', produto);
-        console.log('Quantidade:', quantidade);
-        console.log('Fornecedor:', fornecedor);
+    const handleCadastro = async () => {
+        try {
+            // Adicionar os dados ao Firestore
+            const docRef = await addDoc(collection(db, 'entrada'), {
+                nf: nf,
+                produto: produto,
+                quantidade: quantidade,
+                fornecedor: fornecedor
+            });
+            console.log('Documento adicionado com ID: ', docRef.id);
 
-        // Limpar os campos após o envio
-        setNF('');
-        setProduto('');
-        setQuantidade('');
-        setFornecedor('');
+            // Limpar os campos após a adição dos dados
+            setNF('');
+            setProduto('');
+            setQuantidade('');
+            setFornecedor('');
+        } catch (error) {
+            console.error('Erro ao adicionar dados: ', error);
+        }
     }
 
 
@@ -61,7 +72,7 @@ export default function Entrada(){
                 value={fornecedor}
                 onChangeText={text => setFornecedor(text)}
             />
-            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+            <TouchableOpacity style={styles.button} onPress={handleCadastro}>
                 <Text style={styles.buttonText}>Cadastrar</Text>
             </TouchableOpacity>
         </View>  
@@ -99,5 +110,3 @@ const styles = StyleSheet.create({
         fontSize: 16
     }
 })
-
-

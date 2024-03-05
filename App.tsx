@@ -3,6 +3,10 @@ import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer} from '@react-navigation/native'
 import { createStackNavigator} from '@react-navigation/stack'
 
+// firebase
+// import firestore from "./src/FIREBASE/firebase";
+// import app from "./src/FIREBASE/firebase"
+
 // Screens
 import homePage from './src/pages/HOME/home'
 import entradaPage from './src/pages/ENTRADA/entrada'
