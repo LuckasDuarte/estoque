@@ -10,21 +10,64 @@ import {
 // icons
 import { Entypo, MaterialCommunityIcons, Feather  } from '@expo/vector-icons';
 
+// Firebase
+import { collection, getDocs, query, where, onSnapshot } from 'firebase/firestore';
+import { db } from '../../FIREBASE/firebase'; // Importe o db do seu arquivo de configuração
+
 export default function Estoque(){
 
     const [estoque, setEstoque] = useState([]);
 
-    // Simulando dados de estoque
     useEffect(() => {
-        // Aqui você pode buscar os dados do estoque do seu banco de dados ou de outra fonte de dados
-        const dadosEstoque = [
-            { id: 1, produto: 'Produto 1', quantidade: 10 },
-            { id: 2, produto: 'Produto 2', quantidade: 15 },
-            { id: 3, produto: 'Produto 3', quantidade: 20 },
-            // Adicione mais itens conforme necessário
-        ];
-        setEstoque(dadosEstoque);
+        const fetchData = async () => {
+            try {
+                // Consultar entradas
+                const entradasSnapshot = await getDocs(collection(db, 'estoque'));
+                const entradas = entradasSnapshot.docs.map(doc => doc.data());
+
+                // Consultar saídas
+                const saidasSnapshot = await getDocs(collection(db, 'saida'));
+                const saidas = saidasSnapshot.docs.map(doc => doc.data());
+
+                // Calcular saldo para cada produto
+                const saldoPorProduto = {};
+
+                // Calcular entradas
+                entradas.forEach(entrada => {
+                    if (!saldoPorProduto[entrada.produto]) {
+                        saldoPorProduto[entrada.produto] = entrada.quantidade;
+                    } else {
+                        saldoPorProduto[entrada.produto] += entrada.quantidade;
+                    }
+                });
+
+                // Subtrair saídas
+                saidas.forEach(saida => {
+                    if (!saldoPorProduto[saida.produto]) {
+                        saldoPorProduto[saida.produto] = -saida.quantidade;
+                    } else {
+                        saldoPorProduto[saida.produto] -= saida.quantidade;
+                    }
+                });
+
+                // Transformar o objeto saldoPorProduto em um array
+                const estoqueArray = Object.entries(saldoPorProduto).map(([produto, saldo]) => ({ produto, saldo }));
+                setEstoque(estoqueArray);
+            } catch (error) {
+                console.error('Erro ao buscar dados do estoque:', error);
+            }
+        };
+
+        fetchData();
+
+        // Atualizar o estoque em tempo real
+        const unsubscribe = onSnapshot(collection(db, 'estoque'), () => {
+            fetchData();
+        });
+
+        return () => unsubscribe();
     }, []);
+
 
 
 
@@ -33,11 +76,11 @@ export default function Estoque(){
             <Text style={styles.title}>Estoque</Text>
             <FlatList
                 data={estoque}
-                keyExtractor={item => item.id.toString()}
+                keyExtractor={(item, index) => item.produto}
                 renderItem={({ item }) => (
                     <View style={styles.item}>
                         <Text>{item.produto}</Text>
-                        <Text>Quantidade: {item.quantidade}</Text>
+                        <Text>Quantidade: {item.saldo}</Text>
                     </View>
                 )}
             />
