@@ -5,6 +5,7 @@ import {
     TouchableOpacity,
     StyleSheet,
     TextInput,
+    Alert
 } from 'react-native'
 
 // icons
@@ -34,7 +35,7 @@ export default function Entrada(){
                 fornecedor: fornecedor
             });
             console.log('Documento adicionado com ID: ', docRef.id);
-            alert("Entrada Registrada!")
+            Alert.alert("Sucesso", "Entrada registrada com sucesso!")
 
             // Limpar os campos após a adição dos dados
             setNF('');
