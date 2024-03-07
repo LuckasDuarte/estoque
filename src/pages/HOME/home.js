@@ -9,34 +9,42 @@ import {
 // icons
 import { Entypo, MaterialCommunityIcons, Feather  } from '@expo/vector-icons';
 
+// Linear Gradient
+import { LinearGradient } from 'expo-linear-gradient';
+
 export default function Home({ navigation }){
     return (
+        <LinearGradient
+            colors={['#87CEEB', '#3F51B5']}
+            style={styles.container}
+        >
         <View style={styles.container}>
             <View style={styles.containerBtn}>
                 <TouchableOpacity style={styles.Btn}
                     onPress={() => navigation.navigate('Entrada')}
                 >
-                    <Entypo name="box" size={50} color="black" />
-                    <Text>ENTRADA</Text>
+                    <Entypo name="box" size={50} color="white" />
+                    <Text style={styles.textBtn}>ENTRADA</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.Btn}
                     onPress={() => navigation.navigate('Saida')}
                 >
-                    <MaterialCommunityIcons name="truck-delivery" size={50} color="black" />
-                    <Text>SAÍDA</Text>
+                    <MaterialCommunityIcons name="truck-delivery" size={50} color="white" />
+                    <Text style={styles.textBtn}>SAÍDA</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.Btn}
                     onPress={() => navigation.navigate('Estoque')}
                 >
-                <Feather name="package" size={50} color="black" />
-                    <Text>ESTOQUE</Text>
+                <Feather name="package" size={50} color="white" />
+                    <Text style={styles.textBtn}>ESTOQUE</Text>
                 </TouchableOpacity>
             </View>
 
-        <Text>PROJETO INTEGRADOR III - ENG. COMPUTAÇÃO</Text>
-        </View> 
+        <Text style={styles.textBtn}>PROJETO INTEGRADOR III - ENG. COMPUTAÇÃO</Text>
+        </View>
+        </LinearGradient>
     );
 }
 
@@ -44,13 +52,12 @@ const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#fff',
         flex: 1
     },
     containerBtn:{
         flexDirection: 'row', // Alterado para 'row'
         flexWrap: 'wrap', // Adicionado para quebra de linha
-        justifyContent: 'center', // Centralizar os botões
+        justifyContent: 'center', // Centralizar os botões,
     },
     Btn: {
         width: '45%', // Definindo a largura para ocupar 45% da tela
@@ -58,10 +65,12 @@ const styles = StyleSheet.create({
         margin: '2.5%', // Margem entre os botões
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#ccc',
-        borderRadius: 10,
+        backgroundColor: '#3F51B5',
+        borderRadius: 15,
+    },
+    textBtn: {
+        color: "#fff",
+        fontWeight: 'bold'
     }
 })
-
-{/* <Entypo name="box" size={24} color="black" /> */}
 
