@@ -11,6 +11,9 @@ import {
 // icons
 import { Entypo, MaterialCommunityIcons, Feather  } from '@expo/vector-icons';
 
+// Linear gradient
+import { LinearGradient } from "expo-linear-gradient";
+
 // importando firestore
 import { collection, addDoc, getDocs, onSnapshot, doc, setDoc} from 'firebase/firestore';
 import { db } from '../../FIREBASE/firebase'; // Importe o db do seu arquivo de configuração
@@ -50,7 +53,7 @@ export default function Entrada(){
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Cadastro de Itens Para Entrada</Text>
+            <Text style={styles.title}>CADASTRAR ENTRADA</Text>
             <TextInput
                 style={styles.input}
                 placeholder="NF"
@@ -80,16 +83,16 @@ export default function Entrada(){
             <TouchableOpacity style={styles.button} onPress={handleCadastro}>
                 <Text style={styles.buttonText}>Cadastrar</Text>
             </TouchableOpacity>
-        </View>  
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#fff'
+        flex: 1,
+        backgroundColor: "#fff"
     },
     title: {
         fontSize: 20,
@@ -105,7 +108,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10
     },
     button: {
-        backgroundColor: 'blue',
+        backgroundColor: 'green',
         padding: 10,
         borderRadius: 5,
         marginTop: 20
